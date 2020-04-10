@@ -7,5 +7,33 @@
     <script>
         initialize();
     </script>
+    <style>
+        .sliderContainer {
+            position: relative;
+        }
+
+        .slider {
+            width: 600px;
+            margin: 10px;
+            position: absolute;
+            top: -15px;
+            -webkit-appearance: none;
+            background: rgba(0,0,0,0);
+        }
+
+        .slider:focus {
+            outline: 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 10px;
+            height: 20px;
+            background: rgb(80, 80, 80); /* Green background */
+            border-radius: 3px;
+            cursor: pointer; /* Cursor on hover */
+        }
+    </style>
 </body>
 </html>
