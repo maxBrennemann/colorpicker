@@ -1,7 +1,7 @@
 var canvasContext;
 var colorContext;
 var colorDiv;
-var foregroundColor = "blue";
+var foregroundColor = "cyan";
 
 function initialize() {
     var canvas = createHiDPICanvas(300, 200);
@@ -80,29 +80,6 @@ function applyEventListeners(canvas) {
     }, false);
 }
 
-var isDownColorSel = false;
-function applyEventListeners2(canvas) {
-    canvas.addEventListener("mousedown", function(event) {
-        isDownColorSel = true;
-    }, false);
-
-    canvas.addEventListener("mousemove", function(event) {
-        if (isDownColorSel) {
-            drawForegroundSelectorGradient();
-            mousePos = getMousePos(canvas, event);
-
-            var p = colorContext.getImageData(mousePos.x, mousePos.y, 1, 1).data;
-            console.log(p);
-            var color = "#" + p[0].toString(16) + p[1].toString(16) + p[2].toString(16);
-            colorDiv.style.background = foregroundColor = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
-        }
-    }.bind(canvas), false);
-
-    canvas.addEventListener("mouseup", function(event) {
-        isDownColorSel = false;
-    }, false);
-}
-
 function createForegroundSelector() {
     var canvas = document.createElement("canvas");
     canvas.width = 600;
@@ -110,11 +87,15 @@ function createForegroundSelector() {
     colorContext = canvas.getContext("2d");
 
     applyStyle(canvas);
-    document.body.appendChild(canvas);
+
+    var div = document.createElement("div");
+    div.classList.add("sliderContainer");
+    div.appendChild(canvas);
+
+    document.body.appendChild(div);
 
     drawForegroundSelectorGradient();
-
-    applyEventListeners2(canvas);
+    createSlider(div);
 }
 
 function drawForegroundSelectorGradient() {
@@ -135,6 +116,28 @@ function applyStyle(element) {
     element.style.borderRadius = "6px";
     element.style.display = "block";
     element.style.margin = "10px";
+}
+
+function createSlider(parent) {
+    var slider = document.createElement("input");
+    slider.type = "range";
+    slider.classList.add("slider");
+    slider.min = "1";
+    slider.max = "600";
+    slider.value = "300";
+
+    slider.oninput = function() {
+        var sliederVal = this.value;
+
+        var p = colorContext.getImageData(sliederVal, 5, 1, 1).data;
+        console.log(p);
+        foregroundColor = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
+
+        createForegroundColor();
+        createBackgroundGradient();
+    }
+
+    parent.appendChild(slider);
 }
 
 /* https://stackoverflow.com/questions/17130395/real-mouse-position-in-canvas */
