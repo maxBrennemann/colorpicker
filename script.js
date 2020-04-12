@@ -1,12 +1,15 @@
 var canvasContext;
 var colorContext;
 var colorDiv;
+var colorSpan;
 var foregroundColor = "cyan";
+var mousePos = {x : 100, y : 100};
 
 function initialize() {
     var canvas = createHiDPICanvas(300, 200);
     canvasContext = canvas.getContext("2d");
 
+    loadHTML();
     applyEventListeners(canvas);
 
     applyStyle(canvas);
@@ -15,11 +18,49 @@ function initialize() {
     createForegroundColor();
     createBackgroundGradient();
     createForegroundSelector();
+    createCircles(mousePos.x, mousePos.y);
 
     colorDiv = document.createElement("div");
     colorDiv.style.width = "100px";
     colorDiv.style.height = "100px";
+    colorDiv.style.marginLeft = "10px";
+    colorDiv.style.borderRadius = "6px";
     document.body.appendChild(colorDiv);
+
+    colorSpan = document.createElement("span");
+    document.body.appendChild(colorSpan);
+}
+
+function loadHTML() {
+    var style = document.createElement("style");
+    style.innerHTML = `
+        .sliderContainer {
+            position: relative;
+        }
+
+        .slider {
+            width: 600px;
+            margin: 10px;
+            position: absolute;
+            top: -15px;
+            -webkit-appearance: none;
+            background: rgba(0,0,0,0);
+        }
+
+        .slider:focus {
+            outline: 0;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; /* Override default look */
+            appearance: none;
+            width: 10px;
+            height: 20px;
+            background: rgb(80, 80, 80); /* Green background */
+            border-radius: 3px;
+            cursor: pointer; /* Cursor on hover */
+        }`;
+    document.body.appendChild(style);
 }
 
 function createBackgroundGradient() {
@@ -49,35 +90,34 @@ function applyEventListeners(canvas) {
 
     canvas.addEventListener("mousemove", function(event) {
         if (isDown) {
-            createForegroundColor();
-            createBackgroundGradient();
-            mousePos = getMousePos(canvas, event);
-
-            // white circle
-            canvasContext.beginPath();
-            canvasContext.arc(mousePos.x, mousePos.y, 5, 0, 2 * Math.PI);
-            canvasContext.lineWidth = 3;
-            canvasContext.strokeStyle = "white";
-            canvasContext.stroke();
-
-            // grey circle
-            canvasContext.beginPath();
-            canvasContext.arc(mousePos.x, mousePos.y, 8, 0, 2 * Math.PI);
-            canvasContext.lineWidth = 3;
-            canvasContext.strokeStyle = "#2e2e2e";
-            canvasContext.stroke();
-
-            var p = canvasContext.getImageData(mousePos.x * PIXEL_RATIO, mousePos.y * PIXEL_RATIO, 1, 1).data;
-            console.log(p);
-            var color = "#" + p[0].toString(16) + p[1].toString(16) + p[2].toString(16);
-
-            colorDiv.style.background = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
+            outputColor(canvas);
         }
     }.bind(canvas), false);
 
     canvas.addEventListener("mouseup", function(event) {
         isDown = false;
     }, false);
+}
+
+function outputColor(canvas) {
+    createForegroundColor();
+    createBackgroundGradient();
+    mousePos = canvas == null ? mousePos : getMousePos(canvas, event);
+
+    createCircles(mousePos.x, mousePos.y);
+
+    var p = canvasContext.getImageData(mousePos.x * PIXEL_RATIO, mousePos.y * PIXEL_RATIO, 1, 1).data;
+    var color = rgbToHex(p[0], p[1], p[2]);
+
+    function rgbToHex(r, g, b) {
+        if (r > 255 || g > 255 || b > 255)
+            throw "Invalid color component";
+        return ((r << 16) | (g << 8) | b).toString(16);
+    }
+
+    colorDiv.style.background = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
+
+    colorSpan.innerHTML = `#${color.toUpperCase()}<br>rgb(${p[0]}, ${p[1]}, ${p[2]})`;
 }
 
 function createForegroundSelector() {
@@ -118,6 +158,22 @@ function applyStyle(element) {
     element.style.margin = "10px";
 }
 
+function createCircles(mouseX, mouseY) {
+    // white circle
+    canvasContext.beginPath();
+    canvasContext.arc(mouseX, mouseY, 5, 0, 2 * Math.PI);
+    canvasContext.lineWidth = 3;
+    canvasContext.strokeStyle = "white";
+    canvasContext.stroke();
+
+    // grey circle
+    canvasContext.beginPath();
+    canvasContext.arc(mouseX, mouseY, 8, 0, 2 * Math.PI);
+    canvasContext.lineWidth = 3;
+    canvasContext.strokeStyle = "#2e2e2e";
+    canvasContext.stroke();
+}
+
 function createSlider(parent) {
     var slider = document.createElement("input");
     slider.type = "range";
@@ -127,14 +183,10 @@ function createSlider(parent) {
     slider.value = "300";
 
     slider.oninput = function() {
-        var sliederVal = this.value;
-
-        var p = colorContext.getImageData(sliederVal, 5, 1, 1).data;
-        console.log(p);
+        var sliderVal = this.value;
+        var p = colorContext.getImageData(sliderVal, 5, 1, 1).data;
         foregroundColor = `rgb(${p[0]}, ${p[1]}, ${p[2]})`;
-
-        createForegroundColor();
-        createBackgroundGradient();
+        outputColor();
     }
 
     parent.appendChild(slider);
