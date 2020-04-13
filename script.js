@@ -2,10 +2,11 @@ var canvasContext;
 var colorContext;
 var colorDiv;
 var colorSpan;
+var color;
 var foregroundColor = "cyan";
 var mousePos = {x : 100, y : 100};
 
-function initialize() {
+function initializeColorpicker() {
     var canvas = createHiDPICanvas(300, 200);
     canvasContext = canvas.getContext("2d");
 
@@ -107,7 +108,7 @@ function outputColor(canvas) {
     createCircles(mousePos.x, mousePos.y);
 
     var p = canvasContext.getImageData(mousePos.x * PIXEL_RATIO, mousePos.y * PIXEL_RATIO, 1, 1).data;
-    var color = rgbToHex(p[0], p[1], p[2]);
+    color = rgbToHex(p[0], p[1], p[2]);
 
     function rgbToHex(r, g, b) {
         if (r > 255 || g > 255 || b > 255)
@@ -223,4 +224,47 @@ createHiDPICanvas = function(w, h, ratio) {
     can.style.height = h + "px";
     can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
     return can;
+}
+
+// oop
+
+var Colorpicker = function() {
+    this.canvas; // general Canvas
+    this.canvasContext;
+    this.colorCanvas; // canvas for foreground color selection
+    this.colorContext;
+
+    this.backgroundGradient;
+
+    this.mousePos = {x : 100, y : 100};
+    this.foregroundColor = "cyan";
+
+    this.colorDiv;
+    this.colorSpan;
+
+    this.color;
+
+    this.initialize = function() {
+
+    }
+}
+
+Colorpicker.prototype.createBackgroundGradient = function() {
+    if (this.backgroundGradient == null) {
+        this.backgroundGradient = this.canvasContext.createLinearGradient(0, 0, 0, 200);
+        this.backgroundGradient.addColorStop(0, "transparent");
+        this.backgroundGradient.addColorStop(1, "black");
+    }
+
+    this.canvasContext.fillStyle = this.backgroundGradient;
+    this.canvasContext.fillRect(0, 0, 300, 200);
+}
+
+Colorpicker.prototype.createForegroundColor = function() {
+    var gradient = this.canvasContext.createLinearGradient(0, 0, 300, 0);
+    gradient.addColorStop(0, 'white');
+    gradient.addColorStop(1, this.foregroundColor);
+
+    this.canvasContext.fillStyle = gradient;
+    this.canvasContext.fillRect(0, 0, 300, 200);
 }
