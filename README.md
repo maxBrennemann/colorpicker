@@ -1,4 +1,7 @@
 # colorpicker
 a simple colorpicker
 
-init function: initializeColorpicker()
+initialize:
+
+// can be initialized with every dom htlm element;
+var cp = new Colorpicker(document.body);
