@@ -1,5 +1,6 @@
 # colorpicker
-a simple colorpicker
+a simple colorpicker,
+its just a little fun idea to publish it on github
 
 initialize:
 
