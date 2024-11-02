@@ -62,7 +62,7 @@ class Colorpicker {
         this.canvasContext.fillRect(0, 0, 300, 200);
     }
 
-    createForegroundSelector() {
+    createForegroundSelector(anchor = null) {
         this.colorCanvas = document.createElement("canvas");
         this.colorCanvas.width = 600;
         this.colorCanvas.height = 10;
@@ -74,7 +74,11 @@ class Colorpicker {
         div.classList.add("sliderContainer");
         div.appendChild(this.colorCanvas);
 
-        document.body.appendChild(div);
+        if (anchor != null) {
+            anchor.appendChild(div);
+        } else {
+            this.parentNode.appendChild(div);
+        }
 
         this.drawForegroundSelectorGradient();
         this.createSlider(div);
