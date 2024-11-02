@@ -18,6 +18,8 @@ class Colorpicker {
 
         this.isDown = false;
 
+        this.parentNode = parentNode;
+
         this.initialize = function () {
             this.loadHTML();
             this.applyEventListeners(this.canvas);
