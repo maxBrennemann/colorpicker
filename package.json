@@ -1,15 +1,12 @@
 {
     "name": "colorpicker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A simple colorpicker project",
     "repository": {
         "type": "git",
         "url": "https://github.com/maxBrennemann/colorpicker.git"
     },
     "main": "colorpicker.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
     "author": "Max Brennemann",
     "license": "LGPL-3.0-or-later"
 }

@@ -1,4 +1,4 @@
-class Colorpicker {
+export class Colorpicker {
 
     constructor(parentNode) {
         this.canvas = this.createHiDPICanvas(300, 200);
@@ -241,10 +241,10 @@ Colorpicker.prototype.PIXEL_RATIO = (function () {
     var ctx = document.createElement("canvas").getContext("2d"),
         dpr = window.devicePixelRatio || 1,
         bsr = ctx.webkitBackingStorePixelRatio ||
-              ctx.mozBackingStorePixelRatio ||
-              ctx.msBackingStorePixelRatio ||
-              ctx.oBackingStorePixelRatio ||
-              ctx.backingStorePixelRatio || 1;
+            ctx.mozBackingStorePixelRatio ||
+            ctx.msBackingStorePixelRatio ||
+            ctx.oBackingStorePixelRatio ||
+            ctx.backingStorePixelRatio || 1;
 
     return dpr / bsr;
 })();
