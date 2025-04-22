@@ -130,20 +130,19 @@ export class Colorpicker {
     }
 
     applyEventListeners() {
-        this.canvas.addEventListener("mousedown", function (event) {
+        this.canvas.addEventListener("mousedown", () => {
             this.isDown = true;
-        }.bind(this), false);
+        }, false);
 
-        this.canvas.addEventListener("mousemove", function (event) {
-            console.log(this.isDown);
+        this.canvas.addEventListener("mousemove", () => {
             if (this.isDown) {
                 this.outputColor(this.canvas);
             }
-        }.bind(this), false);
+        }, false);
 
-        this.canvas.addEventListener("mouseup", function (event) {
+        this.canvas.addEventListener("mouseup", () => {
             this.isDown = false;
-        }.bind(this), false);
+        }, false);
     }
 
     outputColor(canvas) {
@@ -157,8 +156,9 @@ export class Colorpicker {
         this.color = rgbToHex(p[0], p[1], p[2]);
 
         function rgbToHex(r, g, b) {
-            if (r > 255 || g > 255 || b > 255)
+            if (r > 255 || g > 255 || b > 255) {
                 throw "Invalid color component";
+            }
             return ((r << 16) | (g << 8) | b).toString(16);
         }
 
