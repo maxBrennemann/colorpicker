@@ -224,13 +224,17 @@ export class Colorpicker {
     }
 
     createHiDPICanvas(w, h, ratio) {
-        if (!ratio) { ratio = this.PIXEL_RATIO; }
+        if (!ratio) {
+            ratio = this.PIXEL_RATIO;
+        }
         var can = document.createElement("canvas");
         can.width = w * ratio;
         can.height = h * ratio;
         can.style.width = w + "px";
         can.style.height = h + "px";
-        can.getContext("2d").setTransform(ratio, 0, 0, ratio, 0, 0);
+        can.getContext("2d", {
+            willReadFrequently: true
+        }).setTransform(ratio, 0, 0, ratio, 0, 0);
         return can;
     }
 
